@@ -1,19 +1,34 @@
+const Task = require('../models/task')
+
 const getAllTasks = (req, res) => {
-    res.status(200).json({success: true})
+    var allTask = Task.find()
+    res.status(200).json({
+        success: true, 
+        tasks: allTask
+    })
 }
 
 const getTask = (req, res) => {
-    var searched_id = req.params.id
+    var searchedID = req.params.id
+    var searchedTask = Task.findOne({'_id': searchedID})
+    if(!searchedTask) {
+        return 'error' // customError
+    }
     res.status(200).json({
         success: true, 
-        id: searched_id
+        task: searchedTask
     })
 }
 
 const createTask = (req, res) => {
+    var body = req.body
+    if(!body.taskName) {
+        return 'error' // customerError
+    }
+    var createdTask = Task.create(body)
     res.status(201).json({
         success: true, 
-        data: req.body
+        data: createdTask
     })
 }
 
