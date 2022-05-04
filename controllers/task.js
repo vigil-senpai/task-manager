@@ -1,24 +1,26 @@
 const Task = require('../models/task')
+const asyncWrapper = require('../middleware/async-wrapper')
+const {createCustomError} = require('../errors/custom-error')
 
-const getAllTasks = (req, res) => {
-    var allTask = Task.find()
+const getAllTasks = asyncWrapper(async (req, res) => {
+    var allTasks = await Task.find()
     res.status(200).json({
         success: true, 
-        tasks: allTask
+        tasks: allTasks
     })
-}
+})
 
-const getTask = (req, res) => {
+const getTask = asyncWrapper(async (req, res, next) => {
     var searchedID = req.params.id
-    var searchedTask = Task.findOne({'_id': searchedID})
+    var searchedTask = await Task.findOne({'_id': searchedID})
     if(!searchedTask) {
-        return 'error' // customError
+        return next(createCustomError(`Can\'t find task with id of ${searchedID}`, 404))
     }
     res.status(200).json({
         success: true, 
         task: searchedTask
     })
-}
+})
 
 const createTask = (req, res) => {
     var body = req.body
