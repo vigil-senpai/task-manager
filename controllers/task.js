@@ -32,7 +32,7 @@ const createTask = asyncWrapper(async (req, res, next) => {
         description: body.description, 
         completed: body.completed
     }
-    Task.create(taskData)
+    await Task.create(taskData)
     res.status(201).json({
         success: true, 
         task: taskData
@@ -55,7 +55,7 @@ const updateTask = asyncWrapper(async (req, res, next) => {
     var updatedID = req.body._id
     var newData = req.body.data
     var updatedTask = await Task.findOneAndUpdate({'_id': updatedID}, newData, {runValidators: true})
-    if(!updateTask) {
+    if(!updatedTask) {
         return next(createCustomError(`Can\'t find task with id of ${deletedID}`, 404))
     }
     res.status(200).json({
